@@ -39,3 +39,9 @@
 
 # debug information files
 *.dwo
+
+# build
+build/
+compile_commands.json
+.clang-format
+.cache/
