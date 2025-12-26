@@ -44,3 +44,16 @@ add_subdirectory(${glm_SOURCE_DIR} ${glm_BINARY_DIR})
 endif()
 
 set_target_properties(glm PROPERTIES FOLDER "dependencies")
+
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.x
+)
+if (NOT spdlog_POPULATED)
+    set(FETCHCONTENT_QUIET NO)
+    FetchContent_Populate(spdlog)
+    add_subdirectory(${spdlog_SOURCE_DIR} ${spdlog_BINARY_DIR})
+endif()
+
+set_target_properties(spdlog PROPERTIES FOLDER "dependencies")

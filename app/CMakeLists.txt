@@ -2,6 +2,9 @@
 
 set(SOURCES
   src/main.cpp
+
+  src/app_layer.cpp
+  src/app_layer.h
 )
 
 add_executable(app)
