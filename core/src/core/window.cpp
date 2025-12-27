@@ -3,7 +3,6 @@
 #include "logger.h"
 #include "window_events.h"
 #include <glad/gl.h>
-#include <iostream>
 
 namespace core {
 
@@ -16,10 +15,17 @@ namespace core {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     m_handle =
         glfwCreateWindow(m_window_spec.width, m_window_spec.height, m_window_spec.title.c_str(), nullptr, nullptr);
 
-    if (!m_handle) assert(false && "ERROR CREATING WINDOW");
+    if (!m_handle) {
+      CORE_LOG_ERROR("ERROR CREATING WINDOW!");
+      assert(false);
+    }
+
+    glfwSetInputMode(m_handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     glfwMakeContextCurrent(m_handle);
     gladLoadGL(glfwGetProcAddress);
@@ -91,7 +97,7 @@ namespace core {
       window->raise_event(event);
     });
 
-    std::cout << "WINDOW BUILT" << std::endl;
+    CORE_LOG_INFO("WINDOW BUILT");
   }
 
   void Window::update() { glfwSwapBuffers(m_handle); }
@@ -118,11 +124,9 @@ namespace core {
   bool Window::should_close() { return glfwWindowShouldClose(m_handle); }
 
   void Window::raise_event(Event &event) {
-    if (m_window_spec.event_callback) {
-      m_window_spec.event_callback(event);
-    }
+    if (m_window_spec.event_callback) m_window_spec.event_callback(event);
   }
 
-  GLFWwindow* Window::get_handle() { return m_handle; }
+  GLFWwindow *Window::get_handle() { return m_handle; }
 
 }

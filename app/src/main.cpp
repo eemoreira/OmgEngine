@@ -1,6 +1,8 @@
 #include "app_layer.h"
 #include "core/application.h"
 #include "core/logger.h"
+#include "imgui_layer.h"
+#include "overlay_layer.h"
 
 int main() {
 
@@ -13,6 +15,8 @@ int main() {
 
   core::Application app(app_spec);
   app.push_layer<AppLayer>();
+  app.push_layer<ImGuiLayer>();
+  app.push_layer<OverlayLayer>();
   app.run();
 
   CORE_LOG_TRACE("good bye :)");

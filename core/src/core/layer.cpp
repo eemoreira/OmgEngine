@@ -4,7 +4,5 @@
 #include <memory>
 
 namespace core {
-  void Layer::queue_transition(std::unique_ptr<Layer> layer) {
-    CORE_LOG_WARN("QUEUE TRANSITION NOT IMPLEMENTED");
-  }
+  void Layer::queue_transition(std::unique_ptr<Layer> layer) { CORE_LOG_WARN("QUEUE TRANSITION NOT IMPLEMENTED"); }
 }

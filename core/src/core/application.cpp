@@ -39,8 +39,16 @@ namespace core {
         break;
       }
 
-      for (const std::unique_ptr<Layer> &layer : m_layer_stack) layer->on_update();
-      for (const std::unique_ptr<Layer> &layer : m_layer_stack) layer->on_render();
+      float now_time = get_time();
+      float time_step = now_time - last_time;
+      time_step = glm::clamp(time_step, 0.001f, 0.1f);
+      last_time = now_time;
+
+      for (const std::unique_ptr<Layer> &layer : m_layer_stack)
+        if (!layer->is_suspended()) layer->on_update(time_step);
+
+      for (const std::unique_ptr<Layer> &layer : m_layer_stack)
+        if (!layer->is_suspended()) layer->on_render();
 
       m_window->update();
     }
@@ -49,7 +57,11 @@ namespace core {
   void Application::raise_event(Event &event) {
     for (int i = int(m_layer_stack.size() - 1); i >= 0; i--) {
       m_layer_stack[i]->on_event(event);
-      if (event.handled) break;
+      if (event.handled) {
+        CORE_LOG_WARN("EVENT {} HANDLED BY INDEX {}", event.to_string(), i+1);
+        event.handled = true;
+        break;
+      }
     }
   }
 
@@ -58,5 +70,7 @@ namespace core {
   float Application::get_time() { return glfwGetTime(); }
 
   Application &Application::get_application() { return *s_application; }
+
+  glm::vec2 Application::get_framebuffer_size() const { return m_window->get_framebuffer_size(); }
 
 }

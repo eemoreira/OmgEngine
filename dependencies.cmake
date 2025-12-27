@@ -12,6 +12,9 @@ FetchContent_Declare(
 # OpenGL
 find_package(OpenGL REQUIRED)
 
+# assimp
+find_package(assimp REQUIRED)
+
 # GLAD
 FetchContent_Declare(
     glad
@@ -45,6 +48,7 @@ endif()
 
 set_target_properties(glm PROPERTIES FOLDER "dependencies")
 
+# spdlog
 FetchContent_Declare(
     spdlog
     GIT_REPOSITORY https://github.com/gabime/spdlog.git

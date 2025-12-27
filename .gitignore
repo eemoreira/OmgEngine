@@ -45,3 +45,37 @@ build/
 compile_commands.json
 .clang-format
 .cache/
+
+# imgui
+imgui.ini
+core/vendor/imgui/backends/
+core/vendor/imgui/examples/
+core/vendor/imgui/docs/
+core/vendor/imgui/misc/
+
+# assets
+*.png
+*.jpg
+*.jpeg
+*.obj
+*.mtl
+*.fbx
+*.dae
+*.3ds
+*.blend
+*.ase
+*.dxf
+*.lwo
+*.lws
+*.c4d
+*.max
+*.3dm
+*.svg
+*.hdr
+*.tga
+*.psd
+*.tif
+*.tiff
+*.exr
+*.iff
+*.pcx    

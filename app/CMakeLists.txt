@@ -5,6 +5,12 @@ set(SOURCES
 
   src/app_layer.cpp
   src/app_layer.h
+
+  src/imgui_layer.cpp
+  src/imgui_layer.h
+
+  src/overlay_layer.cpp
+  src/overlay_layer.h
 )
 
 add_executable(app)

@@ -13,4 +13,5 @@ void Logger::init() {
 
   s_app_logger = spdlog::stdout_color_mt("APP");
   s_app_logger->set_level(spdlog::level::trace);
+
 }

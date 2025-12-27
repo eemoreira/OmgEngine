@@ -31,7 +31,7 @@ namespace core {
       requires(std::is_base_of<Layer, T>::value)
     T *get_layer_single_instance() {
       for (const auto &layer : m_layer_stack)
-        if (T casted = dynamic_cast<T>(layer.get())) return casted;
+        if (T* casted = dynamic_cast<T*>(layer.get())) return casted;
       return nullptr;
     }
 

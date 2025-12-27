@@ -41,8 +41,9 @@ namespace core {
     template <typename T>
     bool dispatch(std::function<bool(T &)> callback_handler) {
       if (m_event.get_event_type() == T::get_static_type() && !m_event.handled) {
-        CORE_LOG_INFO("DISPATCHING m_event type = {}", m_event.get_name());
-        callback_handler(static_cast<T &>(m_event));
+        if (callback_handler(static_cast<T &>(m_event))) {
+          m_event.handled = true;
+        }
         return true;
       }
 
