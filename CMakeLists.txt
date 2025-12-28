@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Architecture)
+project(OmgEngine)
 
 set(CMAKE_CXX_STANDARD 23)
 

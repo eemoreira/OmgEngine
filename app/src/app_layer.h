@@ -4,6 +4,7 @@
 #include "core/input_events.h"
 #include "core/layer.h"
 #include "core/renderer/camera.h"
+#include "core/renderer/light.h"
 #include "core/renderer/model.h"
 #include "core/renderer/shader.h"
 #include <array>
@@ -20,9 +21,14 @@ public:
   bool is_key_pressed(int32_t key_code) { return m_keys_pressed[key_code]; }
   bool is_red() { return m_is_red; }
   void reset_first_mouse() { m_first_mouse = false; }
+  const std::vector<std::shared_ptr<renderer::Light>> &get_lights() { return m_lights; }
+
+  void create_light(const glm::vec3 &position, const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular, float constant,
+                    float linear, float quadratic) {
+    m_lights.push_back(std::make_shared<renderer::Light>(position, ambient, diffuse, specular, constant, linear, quadratic));
+  }
 
 private:
-  uint32_t vao, vbo, ebo;
   bool on_mouse_button_pressed(core::MouseButtonPressedEvent &event);
   bool on_mouse_button_released(core::MouseButtonReleasedEvent &event);
   bool on_mouse_moved(core::MouseMovedEvent &event);
@@ -45,4 +51,8 @@ private:
   // models
   std::unique_ptr<renderer::Model> m_backpack;
   std::unique_ptr<renderer::Model> m_sponza;
+  std::unique_ptr<renderer::Model> m_light_sphere;
+
+  // light sources
+  std::vector<std::shared_ptr<renderer::Light>> m_lights;
 };

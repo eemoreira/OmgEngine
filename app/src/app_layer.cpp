@@ -13,72 +13,11 @@ AppLayer::AppLayer() {
 
   m_camera = std::make_unique<renderer::Camera>();
 
+  create_light(glm::vec3(0.f), glm::vec3(0.9f), glm::vec3(1.0f), glm::vec3(1.0f), 1.f, 0.007f, 0.0002f);
+
   m_backpack = std::make_unique<renderer::Model>("app/assets/backpack/backpack.obj", true);
   m_sponza = std::make_unique<renderer::Model>("app/assets/sponza/sponza.obj", false);
-
-  // clang-format off
-  float vertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-
-     0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f
-  };
-  // clang-format on
-
-  uint32_t faces[] = {0, 1, 2, 2, 3, 0};
-
-  glGenBuffers(1, &vbo);
-  glGenBuffers(1, &ebo);
-  glGenVertexArrays(1, &vao);
-
-  glBindVertexArray(vao);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(faces), faces, GL_STATIC_DRAW);
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void *)0);
-  glEnableVertexAttribArray(0);
-
-  glBindVertexArray(0);
+  m_light_sphere = std::make_unique<renderer::Model>("app/assets/sphere/sphere.obj", false);
 
   APP_LOG_INFO("CREATED LAYER!, shader.id = {}", m_shader->m_id);
 }
@@ -94,32 +33,46 @@ void AppLayer::on_render() {
   glm::vec2 fb = core::Application::get_application().get_framebuffer_size();
   glViewport(0, 0, static_cast<uint32_t>(fb.x), static_cast<uint32_t>(fb.y));
   glm::mat4 model = glm::mat4(1.f);
-  model = glm::translate(model, glm::vec3(0.f, 0.5f, -5.f));
-  model = glm::rotate(model, core::Application::get_application().get_time(), glm::vec3(0.f, 1.f, 0.f));
   glm::mat4 view = m_camera->view_matrix();
   glm::mat4 projection = glm::perspective(glm::radians(m_camera->get_fov()), fb.x / fb.y, 0.1f, 1000.f);
-  m_shader->setMatrix4f("model", model);
   m_shader->setMatrix4f("view", view);
   m_shader->setMatrix4f("projection", projection);
 
-  glBindVertexArray(vao);
-  // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-  glDrawArrays(GL_TRIANGLES, 0, 36);
-  glBindVertexArray(0);
+  float time = core::Application::get_application().get_time();
+
+  m_shader->use();
+
+  m_shader->setMatrix4f("view", view);
+  m_shader->setMatrix4f("projection", projection);
+  for (size_t i = 0; i < m_lights.size(); ++i) {
+    model = glm::translate(glm::mat4(1.f), m_lights[i]->get_position());
+    m_shader->setMatrix4f("model", model);
+    m_shader->setVec3("color", m_lights[i]->get_diffuse());
+    m_light_sphere->draw(m_shader);
+  }
+
+  m_textured_shader->use();
+  m_textured_shader->setVec3("camera_pos", m_camera->get_posistion());
+  m_textured_shader->setInt("light_count", static_cast<int>(m_lights.size()));
+  for (size_t i = 0; i < m_lights.size(); ++i) {
+    const std::string light_name = "lights[" + std::to_string(i) + "]";
+    m_textured_shader->setLight(light_name, m_lights[i]);
+  }
+  m_textured_shader->setMatrix4f("projection", projection);
+  m_textured_shader->setMatrix4f("view", view);
 
   model = glm::translate(glm::mat4(1.f), glm::vec3(5.f, 2.f, -5.f));
-  m_textured_shader->use();
+  glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(model)));
   m_textured_shader->setMatrix4f("model", model);
-  m_textured_shader->setMatrix4f("view", view);
-  m_textured_shader->setMatrix4f("projection", projection);
+  m_textured_shader->setMatrix3f("normal_matrix", normal_matrix);
   m_backpack->draw(m_textured_shader);
 
+  m_textured_shader->use();
   model = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, -2.f));
   model = glm::scale(model, glm::vec3(0.1f));
-  m_textured_shader->use();
+  normal_matrix = glm::transpose(glm::inverse(glm::mat3(model)));
   m_textured_shader->setMatrix4f("model", model);
-  m_textured_shader->setMatrix4f("view", view);
-  m_textured_shader->setMatrix4f("projection", projection);
+  m_textured_shader->setMatrix3f("normal_matrix", normal_matrix);
   m_sponza->draw(m_textured_shader);
 }
 

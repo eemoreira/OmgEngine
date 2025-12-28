@@ -46,6 +46,9 @@ set(SOURCES
 
   src/core/renderer/mesh.h
   src/core/renderer/mesh.cpp
+
+  src/core/renderer/light.h
+
 )
 
 add_library(core STATIC)

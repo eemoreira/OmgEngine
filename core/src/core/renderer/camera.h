@@ -29,7 +29,7 @@ namespace renderer {
     void update_vectors();
 
     glm::mat4 view_matrix() { return glm::lookAt(m_pos, m_pos + m_front, m_up); }
-    glm::vec3 get_pos() { return m_pos; }
+    glm::vec3 get_posistion() { return m_pos; }
     float get_fov() { return m_fov; }
     glm::vec3 get_front() { return m_front; }
     glm::vec3 get_right() { return m_right; }
