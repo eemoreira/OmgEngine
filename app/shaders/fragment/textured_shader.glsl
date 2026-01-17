@@ -18,6 +18,13 @@ struct Light {
   float quadratic;
 };
 
+struct FlashLight {
+  Light light;
+  vec3 direction;
+  float cut_off;
+  float outer_cut_off;
+};
+
 in vec2 texture_coord;
 in vec3 vertex_normal; 
 in vec3 frag_pos;
@@ -26,10 +33,10 @@ in vec3 view_pos;
 #define MAX_LIGHTS 10
 uniform int light_count;
 uniform Light lights[MAX_LIGHTS];
+uniform FlashLight flashlight;
 uniform Material material;
 
 out vec4 FragColor;
-
 
 vec3 get_ambient(Light _light, Material material, vec4 ambient_texture) {
     return vec3(_light.ambient * ambient_texture.rgb);
@@ -65,6 +72,24 @@ vec3 get_pointlight(Light _light, vec3 norm, Material material, vec4 ambient_tex
     return ambient + diffuse;
 }
 
+vec3 get_spotlight(FlashLight flash, vec3 norm, Material material, vec4 ambient_texture, vec4 diffuse_texture, vec4 specular_texture) {
+    vec3 flash_dir = normalize(flash.light.position - frag_pos);
+    float tetha_cos = dot(flash_dir, normalize(-flash.direction));
+
+    float flash_dist = length(flash.light.position - frag_pos);
+    float flash_attenuation = 1.f / (flash.light.constant + flash_dist * flash.light.linear + flash_dist*flash_dist*flash.light.quadratic);
+    float gamma = (tetha_cos - flash.outer_cut_off) / (flash.cut_off - flash.outer_cut_off);
+    gamma = clamp(gamma, 0.f, 1.f);
+
+    vec3 flash_ambient  = get_ambient(flash.light, material, ambient_texture) * gamma;
+    vec3 flash_diffuse  = get_diffuse(flash.light, norm, material, diffuse_texture) * gamma;
+    vec3 flash_specular = get_specular(flash.light, norm, material, specular_texture) * gamma;
+
+    flash_ambient  *= flash_attenuation;
+    flash_diffuse  *= flash_attenuation;
+    flash_specular *= flash_attenuation;
+    return flash_ambient + flash_diffuse + flash_specular;
+}
 
 void main() {
 
@@ -76,8 +101,11 @@ void main() {
         discard;
 
     vec3 color = vec3(0.f);
-    for (int i = 0; i < light_count; i++)
+    for (int i = 0; i < light_count; i++) {
         color += get_pointlight(lights[i], norm, material, ambient_texture, diffuse_texture, specular_texture);
+    }
+
+    color += get_spotlight(flashlight, norm, material, ambient_texture, diffuse_texture, specular_texture);
 
     FragColor = vec4(color, 1.f);
 }

@@ -7,7 +7,6 @@ OverlayLayer::OverlayLayer() { }
 OverlayLayer::~OverlayLayer() { APP_LOG_INFO("DESTROYED OVERLAY LAYER!"); }
 
 void OverlayLayer::on_event(core::Event &event) {
-  CORE_LOG_INFO("OverlayLayer received event: {}", event.to_string());
   core::EventDispatcher dispatcher(event);
   dispatcher.dispatch<core::KeyPressedEvent>([this](core::KeyPressedEvent &event) { return on_key_pressed(event); });
   dispatcher.dispatch<core::KeyReleasedEvent>([this](core::KeyReleasedEvent &event) { return on_key_released(event); });

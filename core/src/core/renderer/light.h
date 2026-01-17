@@ -34,6 +34,12 @@ namespace renderer {
     void set_linear(float linear) { m_linear = linear; }
     void set_quadratic(float quadratic) { m_quadratic = quadratic; }
 
+    void kill_light() {
+      m_ambient = glm::vec3(0.f);
+      m_diffuse = glm::vec3(0.f);
+      m_specular = glm::vec3(0.f);
+    }
+
   private:
     glm::vec3 m_position;
     glm::vec3 m_ambient;
@@ -63,6 +69,8 @@ namespace renderer {
     const glm::vec3 &get_direction() const { return m_direction; }
     float get_cut_off() const { return m_cut_off; }
     float get_outer_cut_off() const { return m_outer_cut_off; }
+
+    void set_direction(const glm::vec3 &direction) { m_direction = direction; }
 
   private:
     glm::vec3 m_direction;

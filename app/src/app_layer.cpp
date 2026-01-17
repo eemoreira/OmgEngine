@@ -13,11 +13,33 @@ AppLayer::AppLayer() {
 
   m_camera = std::make_unique<renderer::Camera>();
 
-  create_light(glm::vec3(0.f), glm::vec3(0.9f), glm::vec3(1.0f), glm::vec3(1.0f), 1.f, 0.007f, 0.0002f);
+  create_light(glm::vec3(1.f), glm::vec3(0.9f), glm::vec3(1.0f), glm::vec3(1.0f), 1.f, 0.007f, 0.0002f);
 
   m_backpack = std::make_unique<renderer::Model>("app/assets/backpack/backpack.obj", true);
   m_sponza = std::make_unique<renderer::Model>("app/assets/sponza/sponza.obj", false);
   m_light_sphere = std::make_unique<renderer::Model>("app/assets/sphere/sphere.obj", false);
+
+  m_flashlight = std::make_shared<renderer::FlashLight>(
+      m_camera->get_posistion(),
+      m_camera->get_front(),
+      glm::cos(glm::radians(12.5f)),
+      glm::cos(glm::radians(22.5f)),
+      glm::vec3(0.5f),
+      glm::vec3(0.3f),
+      glm::vec3(0.5f),
+      1.f,
+      0.007f,
+      0.0002f
+  );
+
+  // earth sphere
+  m_spheres.emplace_back(std::make_unique<physics::Sphere>(1.f, 5514.f, glm::vec3(-0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, -10.f)));
+
+  // earth sphere
+  m_spheres.emplace_back(std::make_unique<physics::Sphere>(1.f, 5514.f, glm::vec3(-50.f, 0.f, 0.f), glm::vec3(0.f, 0.f, -10.f)));
+
+  // sun sphere (size not to scale)
+  m_spheres.emplace_back(std::make_unique<physics::Sphere>(10.f, 1408.f, glm::vec3(-30.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f)));
 
   APP_LOG_INFO("CREATED LAYER!, shader.id = {}", m_shader->m_id);
 }
@@ -35,6 +57,7 @@ void AppLayer::on_render() {
   glm::mat4 model = glm::mat4(1.f);
   glm::mat4 view = m_camera->view_matrix();
   glm::mat4 projection = glm::perspective(glm::radians(m_camera->get_fov()), fb.x / fb.y, 0.1f, 1000.f);
+  glm::mat3 normal_matrix;
   m_shader->setMatrix4f("view", view);
   m_shader->setMatrix4f("projection", projection);
 
@@ -51,6 +74,17 @@ void AppLayer::on_render() {
     m_light_sphere->draw(m_shader);
   }
 
+  for (size_t i = 0; i < m_spheres.size(); ++i) {
+    model = glm::translate(glm::mat4(1.f), m_spheres[i]->get_position());
+    model = glm::scale(model, glm::vec3(m_spheres[i]->get_radius()));
+    m_shader->setMatrix4f("model", model);
+    glm::vec3 color = m_spheres[i]->get_velocity();
+    APP_LOG_INFO("COLOR: ({}, {}, {})", color.x, color.y, color.z);
+    color = glm::abs(color);
+    m_shader->setVec3("color", color * 10.f);
+    m_light_sphere->draw(m_shader);
+  }
+
   m_textured_shader->use();
   m_textured_shader->setVec3("camera_pos", m_camera->get_posistion());
   m_textured_shader->setInt("light_count", static_cast<int>(m_lights.size()));
@@ -58,18 +92,19 @@ void AppLayer::on_render() {
     const std::string light_name = "lights[" + std::to_string(i) + "]";
     m_textured_shader->setLight(light_name, m_lights[i]);
   }
+  m_textured_shader->setFlashLight("flashlight", m_flashlight);
   m_textured_shader->setMatrix4f("projection", projection);
   m_textured_shader->setMatrix4f("view", view);
 
-  model = glm::translate(glm::mat4(1.f), glm::vec3(5.f, 2.f, -5.f));
-  glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(model)));
-  m_textured_shader->setMatrix4f("model", model);
-  m_textured_shader->setMatrix3f("normal_matrix", normal_matrix);
-  m_backpack->draw(m_textured_shader);
+  // model = glm::translate(glm::mat4(1.f), glm::vec3(5.f, 2.f, -5.f));
+  // normal_matrix = glm::transpose(glm::inverse(glm::mat3(model)));
+  // m_textured_shader->setMatrix4f("model", model);
+  // m_textured_shader->setMatrix3f("normal_matrix", normal_matrix);
+  // m_backpack->draw(m_textured_shader);
 
   m_textured_shader->use();
   model = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, -2.f));
-  model = glm::scale(model, glm::vec3(0.1f));
+  model = glm::scale(model, glm::vec3(1.f));
   normal_matrix = glm::transpose(glm::inverse(glm::mat3(model)));
   m_textured_shader->setMatrix4f("model", model);
   m_textured_shader->setMatrix3f("normal_matrix", normal_matrix);
@@ -117,6 +152,26 @@ void AppLayer::on_update(float time_step) {
     m_camera->sprint();
   if (m_keys_pressed[GLFW_KEY_LEFT_SHIFT] == 0)
     m_camera->walk();
+
+  if (m_flashlight_on) {
+    m_flashlight->set_ambient(glm::vec3(1.f));
+    m_flashlight->set_diffuse(glm::vec3(0.7f));
+    m_flashlight->set_specular(glm::vec3(0.5f));
+  } else {
+    m_flashlight->kill_light();
+  }
+
+  m_flashlight->move_to(m_camera->get_posistion());
+  m_flashlight->set_direction(m_camera->get_front());
+
+  for (size_t i = 0; i < m_spheres.size(); ++i) {
+    for (size_t j = 0; j < m_spheres.size(); ++j) {
+      if (i == j)
+        continue;
+      m_spheres[i]->apply_gravity(m_spheres[j]);
+    }
+  }
+  for (const auto &sphere : m_spheres) sphere->step(time_step);
 }
 
 bool AppLayer::on_key_pressed(core::KeyPressedEvent &event) {
@@ -148,6 +203,11 @@ bool AppLayer::on_mouse_button_released(core::MouseButtonReleasedEvent &event) {
     return true;
   }
 
+  if (glfwGetMouseButton(handle, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE && m_flashlight_on) {
+    m_flashlight_on = false;
+    return true;
+  }
+
   return false;
 }
 
@@ -155,6 +215,10 @@ bool AppLayer::on_mouse_button_pressed(core::MouseButtonPressedEvent &event) {
   GLFWwindow *handle = core::Application::get_application().get_window()->get_handle();
   if (glfwGetMouseButton(handle, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
     m_is_mouse_button_held = true;
+    return true;
+  }
+  if (glfwGetMouseButton(handle, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
+    m_flashlight_on = true;
     return true;
   }
   return false;

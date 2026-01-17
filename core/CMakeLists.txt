@@ -49,6 +49,9 @@ set(SOURCES
 
   src/core/renderer/light.h
 
+
+  src/core/physics/sphere.h
+  src/core/physics/sphere.cpp
 )
 
 add_library(core STATIC)

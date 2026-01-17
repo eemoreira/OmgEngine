@@ -3,6 +3,7 @@
 #include "core/event.h"
 #include "core/input_events.h"
 #include "core/layer.h"
+#include "core/physics/sphere.h"
 #include "core/renderer/camera.h"
 #include "core/renderer/light.h"
 #include "core/renderer/model.h"
@@ -23,8 +24,15 @@ public:
   void reset_first_mouse() { m_first_mouse = false; }
   const std::vector<std::shared_ptr<renderer::Light>> &get_lights() { return m_lights; }
 
-  void create_light(const glm::vec3 &position, const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular, float constant,
-                    float linear, float quadratic) {
+  void create_light(
+      const glm::vec3 &position,
+      const glm::vec3 &ambient,
+      const glm::vec3 &diffuse,
+      const glm::vec3 &specular,
+      float constant,
+      float linear,
+      float quadratic
+  ) {
     m_lights.push_back(std::make_shared<renderer::Light>(position, ambient, diffuse, specular, constant, linear, quadratic));
   }
 
@@ -38,6 +46,7 @@ private:
   bool m_is_red = false;
   bool m_is_mouse_button_held = false;
   bool m_first_mouse = false;
+  bool m_flashlight_on = false;
   float m_delta_time;
   glm::vec2 m_mouse_pos = glm::vec2(0.f);
   std::array<bool, 1024> m_keys_pressed = {false};
@@ -55,4 +64,8 @@ private:
 
   // light sources
   std::vector<std::shared_ptr<renderer::Light>> m_lights;
+  std::shared_ptr<renderer::FlashLight> m_flashlight;
+
+  // spheres
+  std::vector<std::unique_ptr<physics::Sphere>> m_spheres;
 };

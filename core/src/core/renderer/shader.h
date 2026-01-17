@@ -50,16 +50,16 @@ namespace renderer {
       setFloat(uniform_name + ".quadratic", light->get_quadratic());
     }
     void setFlashLight(const std::string &uniform_name, std::shared_ptr<FlashLight> flashlight) {
-      setVec3(uniform_name + ".position", flashlight->get_position());
-      setVec3(uniform_name + ".ambient", flashlight->get_ambient());
-      setVec3(uniform_name + ".diffuse", flashlight->get_diffuse());
-      setVec3(uniform_name + ".specular", flashlight->get_specular());
-      setFloat(uniform_name + ".constant", flashlight->get_constant());
-      setFloat(uniform_name + ".linear", flashlight->get_linear());
-      setFloat(uniform_name + ".quadratic", flashlight->get_quadratic());
+      setVec3(uniform_name + ".light.position", flashlight->get_position());
+      setVec3(uniform_name + ".light.ambient", flashlight->get_ambient());
+      setVec3(uniform_name + ".light.diffuse", flashlight->get_diffuse());
+      setVec3(uniform_name + ".light.specular", flashlight->get_specular());
+      setFloat(uniform_name + ".light.constant", flashlight->get_constant());
+      setFloat(uniform_name + ".light.linear", flashlight->get_linear());
+      setFloat(uniform_name + ".light.quadratic", flashlight->get_quadratic());
       setVec3(uniform_name + ".direction", flashlight->get_direction());
-      setFloat(uniform_name + ".cut_off", glm::cos(flashlight->get_cut_off()));
-      setFloat(uniform_name + ".outer_cut_off", glm::cos(flashlight->get_outer_cut_off()));
+      setFloat(uniform_name + ".cut_off", flashlight->get_cut_off());
+      setFloat(uniform_name + ".outer_cut_off", flashlight->get_outer_cut_off());
     }
   };
 

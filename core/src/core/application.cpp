@@ -58,7 +58,6 @@ namespace core {
     for (int i = int(m_layer_stack.size() - 1); i >= 0; i--) {
       m_layer_stack[i]->on_event(event);
       if (event.handled) {
-        CORE_LOG_WARN("EVENT {} HANDLED BY INDEX {}", event.to_string(), i+1);
         event.handled = true;
         break;
       }
